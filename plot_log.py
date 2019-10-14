@@ -81,6 +81,7 @@ if __name__ == '__main__':
   test_max = 0
   train_max = 0
   for name in filenames:
+    print(name)
     name = name.strip()
     a, b = extract_test_from_log(name, x_label)
     test_x += list(map(lambda x: x + test_max, a))
@@ -96,18 +97,23 @@ if __name__ == '__main__':
   ymax = max(test_y + train_y)
 
   print(test_x)
-  print(f"{list(filter(lambda x: x[1] >= 200, zip(test_x, test_y)))[0]} is first point of convergence")
+  print(test_y)
+  print(train_x)
+  print(train_y)
+  print(xmax)
+  # print(lambda x: x[1] >= 200, zip(test_x, test_y))
+  # print(f"{list(filter(lambda x: x[1] >= 200, zip(test_x, test_y)))[0]} is first point of convergence")
   
   plt.figure(figsize=(16, 12), dpi=100)
 
   plt.fill_between(test_x, np.array(test_y) - np.array(test_error), 
     np.array(test_y) + np.array(test_error), color="red", alpha=0.2)
-  test_plot = plt.plot(test_x, test_y, color="red", ms=25.0, label='100 episode average test reward')
-  train_plot = plt.plot(train_x, train_y, color="black", ms=25.0, label='average train reward')
-  plt.axvline(x=35000, linestyle='--')
+  test_plot = plt.plot(test_x, test_y, color="red", ms=25.0, label='10 episode average test reward')
+  train_plot = plt.plot(train_x, train_y, color="black", ms=25.0, label='10 episode average train reward')
+  # plt.axvline(x=35000, linestyle='--')
 
-  plt.xlim(xmin=args.xmin, xmax=xmax if args.xmax == None else args.xmax)
-  plt.ylim(ymin=args.ymin, ymax=ymax if args.ymax == None else args.ymax)
+  # plt.xlim(xmin=args.xmin, xmax=xmax if args.xmax == None else args.xmax)
+  # plt.ylim(ymin=args.ymin, ymax=ymax if args.ymax == None else args.ymax)
   plt.xlabel(x_label)
   plt.ylabel('Average reward')
   plt.title(args.title if args.title != None else args.log)

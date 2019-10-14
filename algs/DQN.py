@@ -212,6 +212,8 @@ class DQN_Agent():
         q_values_pred, q_values_target = self.net.predict(curr_state)
         action_i = self.epsilon_greedy_policy(q_values_pred)
         next_state, reward, is_terminal, debug_info = self.env.step(action_i)
+        if next_state is not default_goal:
+            reward = -1
         next_state = next_state.reshape((1, -1))
         if default_goal is not None:
             next_state = np.concatenate((next_state, default_goal), axis=1)
@@ -338,6 +340,7 @@ class DQN_Agent():
 
                     experience = self.take_step(curr_state, batch_size, default_goal)
                     _, reward, action_i, curr_state, is_terminal = experience
+
                     new_exp = (experience[0].copy(), reward, action_i, curr_state.copy(), is_terminal)
                     exp_batch.append(new_exp)
                     rep_mem.append(new_exp)
@@ -399,7 +402,7 @@ class DQN_Agent():
                 
 
             if num_episodes % test_episode_mod == 0 and num_episodes > 0:
-                _, result = self.test(num_episodes=20, hindsight=self.hindsight_replay, default_goal=default_goal)
+                _, result = self.test(test_episode_mod, hindsight=self.hindsight_replay, default_goal=default_goal)
                 
                 if save_best:
                     if best_test == None or best_test < result:

@@ -7,6 +7,7 @@ from algs.ddpg import DDPG
 import time 
 import logging 
 import os.path
+import gym_lunarsparse
 
 logger = logging.getLogger("10703")
 logger.setLevel(logging.DEBUG)
@@ -28,17 +29,17 @@ def parse_arguments():
 
     parser.add_argument('--seed', dest='seed', type=int)
     parser.add_argument('--num-episodes', dest='num_episodes', type=int,
-                        default=50000, help="Number of episodes to train on.")
+                        default=1000, help="Number of episodes to train on.")
     parser.add_argument('--gamma', type=float, default=0.99)
 
-    parser.add_argument('--memory-size', type=int, default=50000, help="ER buffer initial max size")
+    parser.add_argument('--memory-size', type=int, default=5000, help="ER buffer initial max size")
 
     # Utils
     parser.add_argument('--render', dest='render', action="store_true")
     parser.add_argument('--record-video-only',dest='record_video_only',action="store_true")
     parser.add_argument('--test-only', action="store_true")
-    parser.add_argument('--train-mod', type=int, default=100, help="Print every x number of episodes")
-    parser.add_argument('--test-mod', type=int, default=500, help="Test every x number of episodes")
+    parser.add_argument('--train-mod', type=int, default=50, help="Print every x number of episodes")
+    parser.add_argument('--test-mod', type=int, default=50, help="Test every x number of episodes")
 
     # A2C 
     parser.add_argument('--actor-model-path', type=str, default=None,
@@ -123,6 +124,8 @@ def main(args):
         if args.env_name == "MountainCar-v0" or args.env_name == "MountainCarContinuous-v0":
             default_goal = np.array([[0.5]]) # flag at x = 0.5
         elif args.env_name == "LunarLander-v2" or args.env_name == "LunarLanderContinuous-v2":
+            default_goal = np.array([[0.0, 0.0]]) # landing pad at x,y = (0,0)
+        elif args.env_name == "lunarsparse-v0" or args.env_name == "lunarsparse-v0":
             default_goal = np.array([[0.0, 0.0]]) # landing pad at x,y = (0,0)
         elif args.env_name == "Pendulum-v0":
             default_goal = np.array([[1.0, 0.0]]) # cos(theta), sin(theta), theta dot 
