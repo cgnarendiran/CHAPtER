@@ -62,10 +62,11 @@ def extract_train_from_log(log_path, x_label):
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser(description='Log Parser')
+  parser.add_argument('--game', type=str, default='lunar_sparse')
   parser.add_argument('--log_rer', type=str, default='logs/rer/')
   parser.add_argument('--log_per', type=str, default='logs/per/')
   parser.add_argument('--log_her', type=str, default='logs/her/')
-  parser.add_argument('--name', type=str, default='deneme')
+  parser.add_argument('--name', type=str, default='_')
 
   parser.add_argument('--xmin', type=int, default=0)
   parser.add_argument('--xmax', type=int)
@@ -76,8 +77,8 @@ if __name__ == '__main__':
 
   args = parser.parse_args()
 
-  x_label = "Episode" if args.use_eps else "Step"
-  save_file_name = f'{PLOT_DIR}/{args.name}.png'
+  x_label = "Episode"  # if args.use_eps else "Step"
+  save_file_name = f'{PLOT_DIR}/{args.name}_{args.game}.png'
 
   log_dirs = [args.log_rer, args.log_per, args.log_her]
   replay_colors = ['gray', 'crimson', 'dodgerblue']
@@ -86,6 +87,7 @@ if __name__ == '__main__':
   plt.figure(figsize=(16, 12), dpi=100)
 
   for i, log_dir in enumerate(log_dirs):
+      log_dir = log_dir.replace('logs/', 'logs/' + args.game + '/')
       filenames = [join(log_dir, f) for f in listdir(log_dir) if isfile(join(log_dir, f))]
       mean_test_x, mean_test_y, mean_test_error = [], [], []
       for name in filenames:
@@ -108,14 +110,24 @@ if __name__ == '__main__':
         mean_test_error.append(test_error)
 
       if filenames:
+          mean_test_x = np.arange(0, 1000, 50)[:-1]
+
+          for m in range(len(mean_test_y)):
+              x = mean_test_x
+              y = mean_test_y[m]
+              test_plot = plt.plot(x, y, color=replay_colors[i], linestyle='dashed', alpha=0.4,
+                                   ms=25.0)  # + ' 10 episode average test reward')
+
           std_test_seed = np.std(mean_test_y, axis=0)
-          mean_test_x = np.mean(mean_test_x, axis=0)
+          # mean_test_x = np.mean(mean_test_x, axis=0)
           mean_test_y = np.mean(mean_test_y, axis=0)
+
+          # mean_test_x = np.arange(0, 1000, 50)[:-1]
 
           mean_test_error = np.mean(mean_test_error, axis=0)
 
           plt.fill_between(mean_test_x, np.array(mean_test_y) - np.array(std_test_seed),
-                           np.array(mean_test_y) + np.array(std_test_seed), color=replay_colors[i], alpha=0.1)
+                           np.array(mean_test_y) + np.array(std_test_seed), color=replay_colors[i], alpha=0.25)
           test_plot = plt.plot(mean_test_x, mean_test_y, color=replay_colors[i],
                                ms=25.0, label=replay_labels[i])  # + ' 10 episode average test reward')
       # train_plot = plt.plot(train_x, train_y, color=replay_colors[i],
@@ -123,8 +135,8 @@ if __name__ == '__main__':
 
 
   plt.xlabel(x_label)
-  plt.ylabel('Average reward')
-  # plt.title(args.title if args.title != None else args.log)
+  plt.ylabel('Mean test reward avg over seeds')
+  plt.title(args.game)
   plt.legend()
   plt.savefig(save_file_name)
   plt.close()
