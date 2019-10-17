@@ -262,7 +262,7 @@ class DQN_Agent():
 
 
     def train(self, use_episodes, episodes_limit, steps_limit, rep_batch_size=False, print_episode_mod=200, test_episode_mod=200, save_best=True,
-                    replay_mem_size=50000, default_goal=None):
+                    replay_mem_size=50000, default_goal=None, test_episodes=5):
         # In this function, we will train our network. 
         # If training without experience replay_memory, then you will interact with the environment 
         # in this function, while also updating your network parameters. 
@@ -402,7 +402,7 @@ class DQN_Agent():
                 
 
             if num_episodes % test_episode_mod == 0 and num_episodes > 0:
-                _, result = self.test(test_episode_mod, hindsight=self.hindsight_replay, default_goal=default_goal)
+                _, result = self.test(test_episodes, hindsight=self.hindsight_replay, default_goal=default_goal)
                 
                 if save_best:
                     if best_test == None or best_test < result:

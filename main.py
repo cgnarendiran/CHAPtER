@@ -40,7 +40,7 @@ def parse_arguments():
     parser.add_argument('--test-only', action="store_true")
     parser.add_argument('--train-mod', type=int, default=50, help="Print every x number of episodes")
     parser.add_argument('--test-mod', type=int, default=50, help="Test every x number of episodes")
-
+    parser.add_argument('--test_episodes', type=int, default=5, help="test for this many eps")
     # A2C 
     parser.add_argument('--actor-model-path', type=str, default=None,
                         help="Path to the actor model file.")
@@ -183,7 +183,7 @@ def main(args):
             agent.train(use_episodes, num_train_episodes, num_train_steps, 
             rep_batch_size = False if args.replay_batch == 0 else args.replay_batch, 
             print_episode_mod=args.train_mod, test_episode_mod=args.test_mod,
-            replay_mem_size=args.memory_size, default_goal=default_goal)
+            replay_mem_size=args.memory_size, default_goal=default_goal, test_episodes=args.test_episodes)
         elif args.alg == "ddpg":
             agent.train(env, args.num_episodes, default_goal=default_goal, hindsight_replay=args.hindsight_replay,
                 priority_replay=args.priority_replay, combined_replay=args.combined_replay,
