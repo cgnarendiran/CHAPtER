@@ -1,6 +1,6 @@
 #!/bin/bash
 
-seedlist=(1 2 3 4 5 6 7 8 9 10)
+seedlist=(1 2 3)
 num_episodes=1000
 
 echo Starting batch....

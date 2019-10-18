@@ -2,7 +2,7 @@
 
 seed=$1
 num_episodes=$2
-memorysize=50000
+memorysize=10000
 lr_per=0.000025
 
 echo Running LunarLander with seed $seed
