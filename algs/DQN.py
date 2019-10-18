@@ -212,8 +212,8 @@ class DQN_Agent():
         q_values_pred, q_values_target = self.net.predict(curr_state)
         action_i = self.epsilon_greedy_policy(q_values_pred)
         next_state, reward, is_terminal, debug_info = self.env.step(action_i)
-        if next_state is not default_goal:
-            reward = -1
+        # if next_state is not default_goal:
+        #     reward = -1
         next_state = next_state.reshape((1, -1))
         if default_goal is not None:
             next_state = np.concatenate((next_state, default_goal), axis=1)
